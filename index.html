@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chemyoon Hub</title>
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #16211c; background: #f4f7f3; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+    main { width: min(100%, 700px); background: white; border: 1px solid #dce5dc; border-radius: 24px; padding: clamp(28px, 6vw, 56px); box-shadow: 0 20px 60px #18301a12; }
+    .eyebrow { margin: 0 0 12px; color: #34733c; font-size: .78rem; font-weight: 800; letter-spacing: .12em; }
+    h1 { margin: 0; font-size: clamp(2rem, 7vw, 4.2rem); letter-spacing: -.07em; }
+    p { color: #526158; font-size: 1.05rem; line-height: 1.7; }
+    .card { margin-top: 32px; padding: 22px; border-radius: 16px; background: #edf6ed; }
+    h2 { margin: 0 0 8px; font-size: 1.1rem; }
+    button { width: 100%; margin-top: 18px; padding: 14px; border: 0; border-radius: 12px; background: #2e7438; color: white; font: inherit; font-weight: 800; opacity: .65; cursor: not-allowed; }
+    small { display: block; margin-top: 20px; color: #718076; text-align: center; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">CHEMYOON PERSONAL APPS</p>
+    <h1>Hub</h1>
+    <p>한 번 로그인으로 개인용 앱을 안전하게 여는 통합 허브입니다.</p>
+    <section class="card" aria-labelledby="phase-title">
+      <h2 id="phase-title">통합 로그인 준비 중</h2>
+      <p>현재 개인 앱의 기존 로그인과 데이터를 유지한 채 공통 인증을 연결하고 있습니다.</p>
+      <button type="button" disabled>통합 로그인 준비 중</button>
+    </section>
+    <small>공개 화면에는 비밀번호, API 키, 개인 데이터가 포함되지 않습니다.</small>
+  </main>
+</body>
+</html>
