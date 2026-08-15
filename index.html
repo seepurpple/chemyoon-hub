@@ -5,30 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Chemyoon Hub</title>
   <style>
-    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #16211c; background: #f4f7f3; }
-    * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+    :root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #16211c; background: #f4f7f3; }
+    * { box-sizing: border-box; } body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; }
     main { width: min(100%, 700px); background: white; border: 1px solid #dce5dc; border-radius: 24px; padding: clamp(28px, 6vw, 56px); box-shadow: 0 20px 60px #18301a12; }
-    .eyebrow { margin: 0 0 12px; color: #34733c; font-size: .78rem; font-weight: 800; letter-spacing: .12em; }
-    h1 { margin: 0; font-size: clamp(2rem, 7vw, 4.2rem); letter-spacing: -.07em; }
-    p { color: #526158; font-size: 1.05rem; line-height: 1.7; }
-    .card { margin-top: 32px; padding: 22px; border-radius: 16px; background: #edf6ed; }
-    h2 { margin: 0 0 8px; font-size: 1.1rem; }
-    button { width: 100%; margin-top: 18px; padding: 14px; border: 0; border-radius: 12px; background: #2e7438; color: white; font: inherit; font-weight: 800; opacity: .65; cursor: not-allowed; }
-    small { display: block; margin-top: 20px; color: #718076; text-align: center; }
+    .eyebrow { margin: 0 0 12px; color: #34733c; font-size: .78rem; font-weight: 800; letter-spacing: .12em; } h1 { margin: 0; font-size: clamp(2rem, 7vw, 4.2rem); letter-spacing: -.07em; }
+    p { color: #526158; font-size: 1.05rem; line-height: 1.7; }.card { margin-top: 28px; padding: 22px; border-radius: 16px; background: #edf6ed; } h2 { margin: 0 0 10px; font-size: 1.1rem; }
+    form { display: grid; gap: 12px; margin-top: 18px; } label { display: grid; gap: 6px; font-size: .9rem; font-weight: 700; } input, button { min-height: 46px; border-radius: 11px; font: inherit; } input { border: 1px solid #b9cabd; padding: 10px 12px; } button { border: 0; padding: 12px; background: #2e7438; color: white; font-weight: 800; cursor: pointer; } button:hover { background: #205d2b; }
+    .error { min-height: 1.4em; margin: 12px 0 0; color: #a33128; font-weight: 700; } [hidden] { display: none !important; } ul { padding: 0; margin: 18px 0 0; list-style: none; display: grid; gap: 9px; } li { padding: 12px 14px; border: 1px solid #d5e3d7; border-radius: 10px; color: #526158; } small { display: block; margin-top: 20px; color: #718076; text-align: center; }
   </style>
 </head>
 <body>
   <main>
-    <p class="eyebrow">CHEMYOON PERSONAL APPS</p>
-    <h1>Hub</h1>
-    <p>한 번 로그인으로 개인용 앱을 안전하게 여는 통합 허브입니다.</p>
-    <section class="card" aria-labelledby="phase-title">
-      <h2 id="phase-title">통합 로그인 준비 중</h2>
-      <p>현재 개인 앱의 기존 로그인과 데이터를 유지한 채 공통 인증을 연결하고 있습니다.</p>
-      <button type="button" disabled>통합 로그인 준비 중</button>
-    </section>
-    <small>공개 화면에는 비밀번호, API 키, 개인 데이터가 포함되지 않습니다.</small>
+    <p class="eyebrow">CHEMYOON PERSONAL APPS</p><h1>Hub</h1>
+    <section id="login"><p>한 번 로그인으로 개인용 앱을 여는 통합 허브입니다.</p><div class="card"><h2>로그인</h2><form id="login-form"><label>ID<input name="identifier" autocomplete="username" required></label><label>비밀번호<input name="password" type="password" autocomplete="current-password" required></label><button>로그인</button></form><p id="error" class="error" aria-live="polite"></p></div></section>
+    <section id="welcome" hidden><p id="greeting"></p><div class="card"><h2>앱 연결 준비 중</h2><p>공통 로그인 확인이 끝난 앱부터 이 목록에 추가됩니다.</p><ul><li>Curriculum</li><li>Memo Board</li><li>Teacher Schedule</li><li>Rubric Writer</li><li>Gongmun AI</li></ul><button id="logout" type="button">로그아웃</button></div></section>
+    <small>비밀번호, API 키, 개인 데이터는 이 공개 저장소에 포함되지 않습니다.</small>
   </main>
+  <script>
+    const login = document.querySelector('#login'), welcome = document.querySelector('#welcome'), error = document.querySelector('#error');
+    function show(user) { login.hidden = true; welcome.hidden = false; document.querySelector('#greeting').textContent = `${user}님, 로그인되었습니다.`; }
+    async function session() { const response = await fetch('/api/hub/auth/session'); const data = await response.json(); if (data.authenticated) show(data.identifier); }
+    document.querySelector('#login-form').addEventListener('submit', async (event) => { event.preventDefault(); error.textContent = ''; const form = new FormData(event.currentTarget); const response = await fetch('/api/hub/auth/login', { method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(Object.fromEntries(form)) }); const data = await response.json(); if (!response.ok) { error.textContent = data.message || data.error || '로그인에 실패했습니다.'; return; } show(data.identifier); });
+    document.querySelector('#logout').addEventListener('click', async () => { await fetch('/api/hub/auth/logout', {method: 'POST'}); welcome.hidden = true; login.hidden = false; document.querySelector('#login-form').reset(); });
+    session();
+  </script>
 </body>
 </html>
